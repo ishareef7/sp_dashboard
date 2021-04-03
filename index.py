@@ -7,15 +7,13 @@ from spotipy import SpotifyOAuth, CacheFileHandler
 from config import SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, SCOPE_STRING, DIR_CACHE, RANGE, \
     PLOTLY_TEMPLATE
 from dash_app import dash_app
-from app.tab_login.layout import layout
 from helpers_spotify import get_top_artists, get_top_tracks, get_track_audio_features, cluster_audio_features
 import itertools
 import collections
 import plotly.express as px
-import plotly.graph_objects as go
-import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
+from app.tab_login.layout import login_page
 
 credentials_manager = SpotifyOAuth(client_id=SPOTIPY_CLIENT_ID,
                                    client_secret=SPOTIPY_CLIENT_SECRET,
@@ -217,43 +215,9 @@ dash_app.layout = html.Div(
     ],
 )
 
-login_page = html.Div([
-    dcc.Link('Login', href='/app/tab_login'),
-])
 
 
 def make_dashboard_page(user_data, time_range: RANGE = RANGE.MEDIUM_TERM):
-    # dashboard_page = [
-    #     # html.H3(f"Hi, {user_data['user_dict']['display_name']}", style={'color': '#EEEEEE'}),
-    #     dbc.Row(id='first-db-row', children=[
-    #         dbc.Col(id='top-artist-col', children=
-    #         [
-    #             top_artists_viz(access_token=user_data['token'], range=range)
-    #         ],
-    #             width=6),
-    #         dbc.Col(id='top-genre-col', children=
-    #         [
-    #             top_genres_viz(access_token=user_data['token'], range=range)
-    #         ],
-    #             width=6)
-    #     ]
-    #     ),
-    #     dbc.Row(id='second-db-row', children=[
-    #         dbc.Col(children=
-    #         [
-    #             top_tracks_viz(access_token=user_data['token'], range=range)
-    #         ],
-    #             width=6),
-    #         dbc.Col(children=
-    #         [
-    #             audio_features_viz(access_token=user_data['token'], range=range)
-    #         ],
-    #             width=6)
-    #     ]
-    #     ),
-    #
-    # ]
-
     dashboard_page = [
         dbc.Row(
             children=[
@@ -313,7 +277,7 @@ def display_page(pathname, data):
             data['user_dict'] = results
             return None, data, redirect, profile_photo
         else:
-            return layout, data, redirect, profile_photo
+            return login_page, data, redirect, profile_photo
     else:
         return '404', None, None
 
